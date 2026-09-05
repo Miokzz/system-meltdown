@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { chapterNames, timeline, useSystem } from "@/utils/store";
+import { chapterNames, useSystem } from "@/utils/store";
 import { audio } from "@/utils/AudioManager";
+import { thermal } from "@/utils/thermal";
 const copy = [
   [
     "EXPERIMENTAL SYSTEM",
@@ -21,22 +22,25 @@ const copy = [
   ["THERMAL ANOMALY", "UNSTABLE", "Some things are better", "left untouched."],
 ];
 export default function HUD() {
-  const { phase, chapter, sound, developer, hover, toast } = useSystem();
+  const {
+    phase,
+    chapter,
+    sound,
+    developer,
+    hover,
+    toast,
+    coverOpen,
+    reducedMotion,
+  } = useSystem();
   const logoClicks = useRef(0);
   const [metrics, setMetrics] = useState([38, 12, 64, 420]);
   useEffect(() => {
     const id = setInterval(() => {
-      const p = timeline.progress;
-      const fail = useSystem.getState().phase === "failure";
       setMetrics([
-        Math.round(
-          38 +
-            p * 65 +
-            (fail ? timeline.failure * 90 : Math.sin(Date.now() / 1700) * 1.5),
-        ),
-        Math.round(12 + p * 83),
+        Math.round(thermal.cpu),
+        Math.round(thermal.load),
         64,
-        Math.round(420 + p * 730),
+        thermal.power,
       ]);
     }, 450);
     return () => clearInterval(id);
@@ -53,7 +57,7 @@ export default function HUD() {
     window.scrollTo({
       top:
         (document.documentElement.scrollHeight - innerHeight) * (i / 6 + 0.025),
-      behavior: "smooth",
+      behavior: reducedMotion ? "instant" : "smooth",
     });
   };
   return (
@@ -65,12 +69,10 @@ export default function HUD() {
           onClick={() => {
             audio.play("click");
             if (++logoClicks.current === 7) {
-              useSystem
-                .getState()
-                .set({
-                  developer: true,
-                  toast: "DEVELOPER MODE — DRAG TO THROW",
-                });
+              useSystem.getState().set({
+                developer: true,
+                toast: "DEVELOPER MODE — DRAG TO THROW",
+              });
             }
           }}
         >
@@ -140,7 +142,19 @@ export default function HUD() {
           <div className="danger-action">
             <span>DO NOT TOUCH ANYTHING</span>
             <button
+              className={`guard-toggle ${coverOpen ? "guard-open" : ""}`}
+              aria-expanded={coverOpen}
+              onClick={() => {
+                audio.play("click");
+                useSystem.getState().set({ coverOpen: !coverOpen });
+              }}
               disabled={phase !== "running"}
+            >
+              {coverOpen ? "SAFETY COVER OPEN" : "LIFT SAFETY COVER"}
+              <span>{coverOpen ? "−" : "+"}</span>
+            </button>
+            <button
+              disabled={phase !== "running" || !coverOpen}
               onClick={() => {
                 audio.play("click");
                 useSystem.getState().set({ phase: "armed" });
@@ -148,7 +162,11 @@ export default function HUD() {
             >
               DO NOT PRESS <b>↗</b>
             </button>
-            <small>MANUAL OVERRIDE / IRREVERSIBLE*</small>
+            <small>
+              {coverOpen
+                ? "OVERRIDE EXPOSED / FINAL OPERATOR DECISION"
+                : "PHYSICAL INTERLOCK / OPEN COVER FIRST"}
+            </small>
           </div>
         )}
       </section>
@@ -180,7 +198,9 @@ export default function HUD() {
           </div>
         ))}
         <div className="telemetry-foot">
-          {critical ? "⚠ THRESHOLD EXCEEDED" : "↑ 0.008 ms LATENCY"}
+          {critical
+            ? "THRESHOLD EXCEEDED"
+            : `${Math.round(thermal.rpm)} RPM / SIMULATION`}
         </div>
       </aside>
       <div className="object-coordinate">
@@ -192,13 +212,26 @@ export default function HUD() {
           <span>COMPONENT IDENTIFIED</span>
           <strong>{hover === "GPU" ? "RTX EXPERIMENTAL GPU" : hover}</strong>
           <div>
-            CORE CLOCK <b>2,850 MHz</b>
+            {hover === "GPU" ? "CORE CLOCK" : "SUBSYSTEM"}{" "}
+            <b>
+              {hover === "GPU"
+                ? `${Math.round(2100 + thermal.load * 7.5)} MHz`
+                : "SM / 06"}
+            </b>
           </div>
           <div>
-            TEMPERATURE <b>{metrics[0]}°C</b>
+            TEMPERATURE{" "}
+            <b>{Math.round(hover === "GPU" ? thermal.gpu : thermal.cpu)}°C</b>
           </div>
           <div>
-            POWER <b>320 W</b>
+            {hover === "COOLING" || hover === "AIRFLOW" ? "FAN SPEED" : "STATE"}
+            <b>
+              {hover === "COOLING" || hover === "AIRFLOW"
+                ? `${Math.round(thermal.rpm)} RPM`
+                : chapter >= 4
+                  ? "RELEASED"
+                  : "CONNECTED"}
+            </b>
           </div>
         </div>
       )}
