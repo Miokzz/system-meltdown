@@ -47,10 +47,20 @@ test("desktop: reversible scroll, physics, recovery and developer mode", async (
     page.getByRole("button", { name: "DO NOT PRESS" }),
   ).toBeVisible();
   await page.waitForTimeout(1600);
+  await expect(
+    page.getByRole("button", { name: "DO NOT PRESS" }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "LIFT SAFETY COVER" }).click();
   await page.getByRole("button", { name: "DO NOT PRESS" }).click();
   await expect(page.locator("main")).toHaveAttribute("data-phase", "armed");
   await page.waitForTimeout(4200);
   const falling = await positions();
+  expect(
+    falling.chain.some(
+      (event: { source: string; target: string }) =>
+        event.source === "screw-1-1" && event.target === "fan-2",
+    ),
+  ).toBe(true);
   expect(
     Object.values(falling.bodies).filter(
       (v) => (v as { dynamic: boolean }).dynamic,
@@ -95,6 +105,10 @@ test("mobile: complete interaction at 390px, no overflow or WebGL failure", asyn
   await page.waitForTimeout(2200);
   await page.screenshot({ path: "artifacts/verified-mobile-exploded.png" });
   await page.getByRole("button", { name: "Chapter 6: INSTABILITY" }).click();
+  await expect(
+    page.getByRole("button", { name: "DO NOT PRESS" }),
+  ).toBeDisabled();
+  await page.getByRole("button", { name: "LIFT SAFETY COVER" }).click();
   await page.getByRole("button", { name: "DO NOT PRESS" }).click();
   await expect(
     page.getByRole("heading", { name: "you had one job." }),
