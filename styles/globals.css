@@ -1029,3 +1029,374 @@ nav .active i {
 [data-phase="rebuild"] nav button {
   pointer-events: none;
 }
+
+/* Compact optical instruments: closed by default so hardware retains the frame. */
+.lab-controls {
+  position: fixed;
+  z-index: 8;
+  top: 100px;
+  right: 48px;
+  font:
+    9px "Courier New",
+    monospace;
+  letter-spacing: 1px;
+  max-width: calc(100vw - 40px);
+}
+.lab-toolbar {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.lab-toolbar button {
+  padding: 9px 0;
+  border-bottom: 1px solid #67818b50;
+  color: #8e9fa9;
+  font-size: 8px;
+  letter-spacing: 1px;
+  display: flex;
+  gap: 13px;
+  align-items: center;
+}
+.lab-toolbar .selected {
+  color: #e6eef2;
+  border-color: #c2dbe6;
+}
+.lab-toolbar kbd {
+  font:
+    8px "Courier New",
+    monospace;
+  border: 1px solid #ffffff24;
+  padding: 2px 4px;
+  color: #a7bfc8;
+}
+.control-panel {
+  width: 286px;
+  margin: 16px 0 0 auto;
+  padding: 19px 20px;
+  background: #090d11f5;
+  border: 1px solid #52687340;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 16px 60px #0006;
+  max-height: calc(100dvh - 195px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #40535e transparent;
+}
+.control-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ffffff15;
+  margin-bottom: 16px;
+  color: #c0d0d9;
+  font-size: 9px;
+}
+.control-heading button {
+  font-size: 21px;
+  padding: 0 3px;
+  color: #7d929c;
+  line-height: 1;
+}
+.control-note {
+  font-size: 7px;
+  color: #617782;
+  line-height: 1.8;
+  letter-spacing: 0.7px;
+  margin: 12px 0 16px;
+}
+.select-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  color: #8c9faa;
+  gap: 10px;
+}
+.select-control select {
+  background: #151e25;
+  border: 1px solid #34444e;
+  border-radius: 0;
+  color: #d2e1e8;
+  font:
+    9px "Courier New",
+    monospace;
+  padding: 7px;
+  max-width: 150px;
+}
+.control-label {
+  font-size: 8px;
+  color: #8c9faa;
+  margin: 22px 0 10px;
+}
+.control-segment {
+  display: flex;
+  border: 1px solid #40525c70;
+  margin: 12px 0 18px;
+}
+.control-segment button {
+  flex: 1;
+  font:
+    8px "Courier New",
+    monospace;
+  letter-spacing: 0.8px;
+  padding: 10px 3px;
+  color: #6e8591;
+}
+.control-segment button[aria-pressed="true"] {
+  background: #718b9924;
+  color: #d5e5ed;
+}
+.control-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 8px;
+  color: #8ca0ab;
+  margin: 14px 0;
+  cursor: pointer;
+}
+.control-toggle input {
+  accent-color: #b5d3df;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+}
+.control-range {
+  display: block;
+  margin: 18px 0;
+  font-size: 8px;
+  color: #8ca0ab;
+}
+.control-range > span {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+.control-range output {
+  color: #d8e5eb;
+}
+.control-range input {
+  width: 100%;
+  height: 2px;
+  accent-color: #bfd9e6;
+  display: block;
+  cursor: ew-resize;
+}
+.control-action {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #637b8960;
+  padding: 13px 11px;
+  margin-top: 20px;
+  font-size: 9px;
+  color: #cedce4;
+  letter-spacing: 1px;
+}
+.control-action:hover {
+  background: #c5e2f00c;
+}
+.control-action:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.control-action span {
+  color: #6f8b9a;
+  font-size: 8px;
+}
+.thermal-key {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 7px;
+  color: #8ca0ab;
+  margin-bottom: 20px;
+}
+.thermal-key i {
+  height: 3px;
+  flex-basis: 100%;
+  margin-bottom: 7px;
+  background: linear-gradient(90deg, #151346, #2537a3, #e15930, #ffdf69);
+}
+.developer-controls {
+  border-top: 1px solid #ffffff16;
+  margin-top: 20px;
+  padding-top: 17px;
+}
+.instrument-readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.instrument-readout strong {
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: -1px;
+  color: #cfe5ee;
+}
+.instrument-readout small {
+  font-size: 8px;
+  margin-left: 7px;
+  color: #809ba8;
+  letter-spacing: 0;
+}
+.instrument-readout > span {
+  font-size: 8px;
+  line-height: 1.7;
+  color: #7894a3;
+  text-align: right;
+}
+.debug-values {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 9px;
+  font-size: 7px;
+  letter-spacing: 0.5px;
+  margin: 18px 0;
+  color: #688490;
+}
+.debug-values dd {
+  color: #b5cdd8;
+  margin: 0;
+  text-align: right;
+}
+.benchmark-result {
+  color: #a5cbbd;
+  font-size: 8px;
+  line-height: 1.9;
+}
+.debug-terminal {
+  border-top: 1px solid #ffffff15;
+  padding-top: 16px;
+  margin-top: 20px;
+}
+.debug-terminal label {
+  color: #91b2c3;
+  font-size: 8px;
+}
+.debug-terminal input {
+  width: 100%;
+  background: #0005;
+  border: 1px solid #67818b40;
+  padding: 9px;
+  margin: 10px 0;
+  color: #b4d1df;
+  font:
+    10px "Courier New",
+    monospace;
+}
+.debug-terminal output {
+  display: block;
+  color: #6b8a99;
+  font-size: 8px;
+  line-height: 1.8;
+}
+[data-hide-hud="true"] > .hud {
+  opacity: 0;
+  visibility: hidden;
+}
+[data-photo="true"] .scene {
+  touch-action: none;
+}
+[data-photo="true"] .part-label {
+  display: none;
+}
+[data-reduced-flash="true"] .failure-warning {
+  animation: none;
+}
+.danger-action .guard-toggle {
+  width: 270px;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  padding: 12px 14px;
+  background: #66858b0c;
+  border: 1px solid #78959e5c;
+  color: #92a4ad;
+  margin: 14px 0 -15px;
+}
+.danger-action .guard-toggle span {
+  font-size: 16px;
+}
+.danger-action .guard-open {
+  color: #c0d3d8;
+  border-color: #9fbcbb70;
+}
+.danger-action > button:not(.guard-toggle):disabled {
+  opacity: 0.35;
+  cursor: default;
+  box-shadow: none;
+}
+.guard-toggle + button {
+  transform: perspective(800px) rotateX(0deg);
+}
+.photo-active {
+  top: 36px;
+}
+.photo-active .control-panel {
+  max-height: calc(100dvh - 110px);
+}
+@media (max-width: 1000px) {
+  .lab-controls {
+    right: 28px;
+    top: 87px;
+  }
+  .lab-toolbar {
+    gap: 12px;
+  }
+  .lab-toolbar button {
+    font-size: 7px;
+    gap: 8px;
+  }
+}
+@media (max-width: 760px) {
+  .lab-controls {
+    top: 67px;
+    right: 22px;
+    left: 22px;
+    max-width: none;
+  }
+  .lab-toolbar {
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .lab-toolbar button {
+    font-size: 7px;
+    gap: 6px;
+  }
+  .control-panel {
+    width: min(286px, 100%);
+    margin-top: 10px;
+    max-height: calc(100dvh - 145px);
+  }
+  .photo-active {
+    top: 22px;
+  }
+  .photo-active .lab-toolbar {
+    justify-content: flex-end;
+    gap: 20px;
+  }
+  .photo-active .control-panel {
+    max-height: calc(100dvh - 86px);
+  }
+  .danger-action .guard-toggle {
+    width: 230px;
+    font-size: 8px;
+    padding: 9px 12px;
+    margin: 12px 0 -11px;
+  }
+  .critical .chapter-copy {
+    top: 16%;
+  }
+  .critical .chapter-copy h1 {
+    font-size: 42px;
+  }
+  .control-range {
+    margin: 15px 0;
+  }
+  .control-action {
+    margin-top: 16px;
+  }
+}
