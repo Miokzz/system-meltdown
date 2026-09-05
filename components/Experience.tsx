@@ -1,6 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
-import { Component, useEffect, useState } from "react";
+import { Component, useEffect } from "react";
 import HUD from "./HUD";
 import ScrollController from "./ScrollController";
 import FailureSequence from "@/animations/FailureSequence";
@@ -9,6 +9,8 @@ import { useSystem } from "@/utils/store";
 import { useQuality } from "@/hooks/useQuality";
 import { audio } from "@/utils/AudioManager";
 import { diagnostics } from "@/utils/diagnostics";
+import LabControls from "./LabControls";
+import CinematicController from "./CinematicController";
 const Laboratory = dynamic(() => import("@/scenes/Laboratory"), { ssr: false });
 class SceneBoundary extends Component<
   { children: React.ReactNode },
@@ -45,40 +47,38 @@ export default function Experience() {
   }, [developer]);
   const phase = useSystem((s) => s.phase),
     ready = useSystem((s) => s.ready);
-  const [loaded, setLoaded] = useState(0);
+  const loaded = useSystem((s) => s.loadProgress);
+  const loadStage = useSystem((s) => s.loadStage);
+  const photo = useSystem((s) => s.photo);
+  const hideHUD = useSystem((s) => s.hideHUD);
+  const reducedFlash = useSystem((s) => s.reducedFlash);
   useEffect(() => {
-    if (phase !== "boot") return;
-    const id = setInterval(
-      () => setLoaded((n) => Math.min(ready ? 100 : 89, n + 4)),
-      70,
-    );
-    return () => clearInterval(id);
-  }, [phase, ready]);
-  useEffect(() => {
-    if (loaded < 100 || phase !== "boot") return;
+    if (!ready || phase !== "boot") return;
+    diagnostics.loadingMs = performance.now();
     const id = setTimeout(
       () => useSystem.getState().set({ phase: "running" }),
       450,
     );
     return () => clearTimeout(id);
-  }, [loaded, phase]);
+  }, [ready, phase]);
   useEffect(() => {
-    const locked = [
-      "boot",
-      "armed",
-      "failure",
-      "blackout",
-      "destroyed",
-      "rebuild",
-    ].includes(phase);
+    const locked =
+      ["boot", "armed", "failure", "blackout", "destroyed", "rebuild"].includes(
+        phase,
+      ) || photo;
     document.documentElement.style.overflow = locked ? "hidden" : "";
     return () => {
       document.documentElement.style.overflow = "";
     };
-  }, [phase]);
+  }, [phase, photo]);
   useEffect(() => () => audio.dispose(), []);
   return (
-    <main data-phase={phase}>
+    <main
+      data-phase={phase}
+      data-photo={photo}
+      data-hide-hud={hideHUD}
+      data-reduced-flash={reducedFlash}
+    >
       <SceneBoundary>
         <Laboratory />
       </SceneBoundary>
@@ -87,6 +87,8 @@ export default function Experience() {
       <ScrollController />
       <FailureSequence />
       <RebuildSequence />
+      <CinematicController />
+      <LabControls />
       {phase === "boot" && (
         <div className="boot">
           <div className="boot-top">
@@ -103,11 +105,7 @@ export default function Experience() {
               <i style={{ width: `${loaded}%` }} />
             </div>
             <div className="boot-status">
-              <span>
-                {loaded === 100
-                  ? "HARDWARE ONLINE"
-                  : "INITIALIZING HARDWARE..."}
-              </span>
+              <span>{ready ? "HARDWARE ONLINE" : loadStage}</span>
               <span>{String(loaded).padStart(3, "0")}%</span>
             </div>
           </div>
